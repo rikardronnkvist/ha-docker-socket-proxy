@@ -4,8 +4,6 @@
 
 Added Home Assistant App-functionallity to the Docker Socket Proxy.
 
-https://github.com/rikardronnkvist/ha-docker-socket-proxy
-
 ## Installation
 
 Navigate in your Home Assistant frontend to **Settings** -> **Apps** -> **Add-on Store**
