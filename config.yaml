@@ -1,6 +1,6 @@
 name: "Docker Socket Proxy"
 description: "Proxy over your Docker socket to a port"
-version: "1.0.0"
+version: "1.0.1"
 slug: "ha-docker-socket-proxy"
 init: false
 arch:
