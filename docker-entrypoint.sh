@@ -4,39 +4,56 @@ set -e
 # Raise default nofile limit for HAProxy v3
 ulimit -n 10000 2>/dev/null || true
 
+# Helper function to extract JSON values without jq
+get_json_value() {
+    local key="$1"
+    local default="$2"
+    local file="$3"
+    
+    # Extract value for the key, handling both string and numeric values
+    value=$(grep -o "\"$key\"[[:space:]]*:[[:space:]]*[^,}]*" "$file" | sed 's/.*:[[:space:]]*//' | sed 's/\"//g' | tr -d ' ')
+    
+    # Return default if empty
+    if [ -z "$value" ] || [ "$value" = "null" ]; then
+        echo "$default"
+    else
+        echo "$value"
+    fi
+}
+
 # Load configuration from Home Assistant if running as add-on
 if [ -f /data/options.json ]; then
     # Export all options from Home Assistant config as environment variables
-    export ALLOW_RESTARTS=$(jq -r '.ALLOW_RESTARTS // 0' /data/options.json)
-    export ALLOW_STOP=$(jq -r '.ALLOW_STOP // 0' /data/options.json)
-    export ALLOW_START=$(jq -r '.ALLOW_START // 0' /data/options.json)
-    export AUTH=$(jq -r '.AUTH // 0' /data/options.json)
-    export BUILD=$(jq -r '.BUILD // 1' /data/options.json)
-    export COMMIT=$(jq -r '.COMMIT // 1' /data/options.json)
-    export CONFIGS=$(jq -r '.CONFIGS // 1' /data/options.json)
-    export CONTAINERS=$(jq -r '.CONTAINERS // 1' /data/options.json)
-    export DISABLE_IPV6=$(jq -r '.DISABLE_IPV6 // 0' /data/options.json)
-    export DISTRIBUTION=$(jq -r '.DISTRIBUTION // 1' /data/options.json)
-    export EVENTS=$(jq -r '.EVENTS // 1' /data/options.json)
-    export EXEC=$(jq -r '.EXEC // 0' /data/options.json)
-    export GRPC=$(jq -r '.GRPC // 0' /data/options.json)
-    export IMAGES=$(jq -r '.IMAGES // 1' /data/options.json)
-    export INFO=$(jq -r '.INFO // 1' /data/options.json)
-    export LOG_LEVEL=$(jq -r '.LOG_LEVEL // "info"' /data/options.json)
-    export NETWORKS=$(jq -r '.NETWORKS // 1' /data/options.json)
-    export NODES=$(jq -r '.NODES // 1' /data/options.json)
-    export PING=$(jq -r '.PING // 1' /data/options.json)
-    export PLUGINS=$(jq -r '.PLUGINS // 1' /data/options.json)
-    export POST=$(jq -r '.POST // 0' /data/options.json)
-    export SECRETS=$(jq -r '.SECRETS // 0' /data/options.json)
-    export SERVICES=$(jq -r '.SERVICES // 1' /data/options.json)
-    export SESSION=$(jq -r '.SESSION // 1' /data/options.json)
-    export SOCKET_PATH=$(jq -r '.SOCKET_PATH // "/var/run/docker.sock"' /data/options.json)
-    export SWARM=$(jq -r '.SWARM // 1' /data/options.json)
-    export SYSTEM=$(jq -r '.SYSTEM // 1' /data/options.json)
-    export TASKS=$(jq -r '.TASKS // 0' /data/options.json)
-    export VERSION=$(jq -r '.VERSION // 1' /data/options.json)
-    export VOLUMES=$(jq -r '.VOLUMES // 1' /data/options.json)
+    export ALLOW_RESTARTS=$(get_json_value "ALLOW_RESTARTS" "0" "/data/options.json")
+    export ALLOW_STOP=$(get_json_value "ALLOW_STOP" "0" "/data/options.json")
+    export ALLOW_START=$(get_json_value "ALLOW_START" "0" "/data/options.json")
+    export AUTH=$(get_json_value "AUTH" "0" "/data/options.json")
+    export BUILD=$(get_json_value "BUILD" "1" "/data/options.json")
+    export COMMIT=$(get_json_value "COMMIT" "1" "/data/options.json")
+    export CONFIGS=$(get_json_value "CONFIGS" "1" "/data/options.json")
+    export CONTAINERS=$(get_json_value "CONTAINERS" "1" "/data/options.json")
+    export DISABLE_IPV6=$(get_json_value "DISABLE_IPV6" "0" "/data/options.json")
+    export DISTRIBUTION=$(get_json_value "DISTRIBUTION" "1" "/data/options.json")
+    export EVENTS=$(get_json_value "EVENTS" "1" "/data/options.json")
+    export EXEC=$(get_json_value "EXEC" "0" "/data/options.json")
+    export GRPC=$(get_json_value "GRPC" "0" "/data/options.json")
+    export IMAGES=$(get_json_value "IMAGES" "1" "/data/options.json")
+    export INFO=$(get_json_value "INFO" "1" "/data/options.json")
+    export LOG_LEVEL=$(get_json_value "LOG_LEVEL" "info" "/data/options.json")
+    export NETWORKS=$(get_json_value "NETWORKS" "1" "/data/options.json")
+    export NODES=$(get_json_value "NODES" "1" "/data/options.json")
+    export PING=$(get_json_value "PING" "1" "/data/options.json")
+    export PLUGINS=$(get_json_value "PLUGINS" "1" "/data/options.json")
+    export POST=$(get_json_value "POST" "0" "/data/options.json")
+    export SECRETS=$(get_json_value "SECRETS" "0" "/data/options.json")
+    export SERVICES=$(get_json_value "SERVICES" "1" "/data/options.json")
+    export SESSION=$(get_json_value "SESSION" "1" "/data/options.json")
+    export SOCKET_PATH=$(get_json_value "SOCKET_PATH" "/var/run/docker.sock" "/data/options.json")
+    export SWARM=$(get_json_value "SWARM" "1" "/data/options.json")
+    export SYSTEM=$(get_json_value "SYSTEM" "1" "/data/options.json")
+    export TASKS=$(get_json_value "TASKS" "0" "/data/options.json")
+    export VERSION=$(get_json_value "VERSION" "1" "/data/options.json")
+    export VOLUMES=$(get_json_value "VOLUMES" "1" "/data/options.json")
 fi
 
 # Normalize the input for DISABLE_IPV6 to lowercase
