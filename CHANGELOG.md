@@ -1,7 +1,7 @@
 # Changelog
 
 ## [2.0.0] - Move
-- Moving to new repo [https://github.com/home-assistant/addons-example](https://github.com/home-assistant/addons-example)
+- Moving to new repo [https://github.com/rikardronnkvist/home-assistant-apps](https://github.com/rikardronnkvist/home-assistant-apps)
 
 ## [1.1.1] - Graphics and Changelog
 - Icon and Logo
